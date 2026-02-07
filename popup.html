@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix WiFi Wall Breaker</title>
+    <style>
+        body {
+            width: 300px;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0 0 15px 0;
+            font-weight: 600;
+        }
+
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.inactive {
+            background: #f44336;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .info {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎬 Netflix WiFi Wall Breaker</h1>
+
+        <div class="status">
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">Checking status...</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number" id="divsRemoved">0</span>
+                <span class="stat-label">Divs Removed</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="runsCount">0</span>
+                <span class="stat-label">Script Runs</span>
+            </div>
+        </div>
+
+        <button class="button" id="manualRun">Run Manually</button>
+        <button class="button" id="checkStatus">Check Status</button>
+
+        <div class="info">
+            This extension automatically removes divs from Netflix pages until it reaches the appMountPoint element,
+            helping to bypass WiFi restrictions. On video pages, it also provides custom video controls.
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
