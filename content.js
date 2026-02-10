@@ -16,6 +16,7 @@
   let videoControls = null;
   let isVideoPage = false;
   let hideControlsTimeout = null;
+  let isFullscreen = false;
 
   // Function to remove divs until appMountPoint
   function removeDivsUntilAppMountPoint() {
@@ -134,8 +135,11 @@
           </div>
                      <div class="controls-actions">
              <button class="control-btn fullscreen-btn" title="Fullscreen">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+               <svg class="fullscreen-enter" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                  <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+               </svg>
+               <svg class="fullscreen-exit" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                 <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
                </svg>
              </button>
            </div>
@@ -152,14 +156,26 @@
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 9999;
+        z-index: 999999;
         pointer-events: none;
         transition: opacity 0.3s ease;
         opacity: 0;
       }
 
+      /* When in fullscreen mode */
+      #netflix-wifi-wall-breaker-controls.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
       #netflix-wifi-wall-breaker-controls.visible {
         opacity: 1;
+        cursor: auto;
+      }
+
+      #netflix-wifi-wall-breaker-controls {
+        cursor: none;
       }
 
       #netflix-wifi-wall-breaker-controls .controls-container {
@@ -297,6 +313,11 @@
         width: 40px;
         height: 40px;
       }
+
+      #netflix-wifi-wall-breaker-controls .fullscreen-enter,
+      #netflix-wifi-wall-breaker-controls .fullscreen-exit {
+        transition: display 0.2s ease;
+      }
     `;
 
     document.head.appendChild(style);
@@ -344,7 +365,7 @@
         if (document.fullscreenElement) {
           document.exitFullscreen();
         } else {
-          video.requestFullscreen();
+          video.parentElement.requestFullscreen();
         }
       }
     });
@@ -388,10 +409,60 @@
     setInterval(updateVideoState, 100);
   }
 
+  // Handle fullscreen changes
+  function handleFullscreenChange() {
+    if (document.fullscreenElement) {
+      // Entered fullscreen
+      isFullscreen = true;
+      if (videoControls) {
+        videoControls.classList.add("fullscreen");
+        // Move controls to fullscreen element
+        const fullscreenElement = document.fullscreenElement;
+        if (
+          fullscreenElement &&
+          fullscreenElement !== videoControls.parentElement
+        ) {
+          fullscreenElement.appendChild(videoControls);
+        }
+        // Update fullscreen icon
+        const fullscreenEnterIcon =
+          videoControls.querySelector(".fullscreen-enter");
+        const fullscreenExitIcon =
+          videoControls.querySelector(".fullscreen-exit");
+        if (fullscreenEnterIcon && fullscreenExitIcon) {
+          fullscreenEnterIcon.style.display = "none";
+          fullscreenExitIcon.style.display = "block";
+        }
+      }
+      console.log("Netflix WiFi Wall Breaker: Entered fullscreen mode");
+    } else {
+      // Exited fullscreen
+      isFullscreen = false;
+      if (videoControls) {
+        videoControls.classList.remove("fullscreen");
+        // Move controls back to body
+        if (videoControls.parentElement !== document.body) {
+          document.body.appendChild(videoControls);
+        }
+        // Update fullscreen icon
+        const fullscreenEnterIcon =
+          videoControls.querySelector(".fullscreen-enter");
+        const fullscreenExitIcon =
+          videoControls.querySelector(".fullscreen-exit");
+        if (fullscreenEnterIcon && fullscreenExitIcon) {
+          fullscreenEnterIcon.style.display = "block";
+          fullscreenExitIcon.style.display = "none";
+        }
+      }
+      console.log("Netflix WiFi Wall Breaker: Exited fullscreen mode");
+    }
+  }
+
   // Show video controls
   function showVideoControls() {
     if (videoControls) {
       videoControls.classList.add("visible");
+      document.body.style.cursor = "auto";
 
       // Auto-hide after 3 seconds
       if (hideControlsTimeout) {
@@ -405,6 +476,7 @@
   function hideVideoControls() {
     if (videoControls) {
       videoControls.classList.remove("visible");
+      document.body.style.cursor = "none";
     }
   }
 
@@ -424,6 +496,9 @@
 
         // Hide controls on mouse leave
         document.addEventListener("mouseleave", hideVideoControls);
+
+        // Listen for fullscreen changes
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
       }
     } else {
       if (isVideoPage) {
@@ -432,6 +507,11 @@
           videoControls.remove();
           videoControls = null;
         }
+        // Remove fullscreen listener
+        document.removeEventListener(
+          "fullscreenchange",
+          handleFullscreenChange,
+        );
         console.log(
           "Netflix WiFi Wall Breaker: Left video page, removing controls...",
         );
