@@ -30,7 +30,7 @@
     const appMountPoint = document.getElementById("appMountPoint");
     if (appMountPoint) {
       console.log(
-        "Netflix WiFi Wall Breaker: appMountPoint found, processing..."
+        "Netflix WiFi Wall Breaker: appMountPoint found, processing...",
       );
 
       // Get all child nodes of body
@@ -38,7 +38,7 @@
 
       // Find the index of appMountPoint
       const appMountPointIndex = bodyChildren.findIndex(
-        (child) => child.id === "appMountPoint"
+        (child) => child.id === "appMountPoint",
       );
 
       if (appMountPointIndex !== -1) {
@@ -57,7 +57,7 @@
         stats.runsCount++;
 
         console.log(
-          `Netflix WiFi Wall Breaker: Removed ${removedCount} divs before appMountPoint`
+          `Netflix WiFi Wall Breaker: Removed ${removedCount} divs before appMountPoint`,
         );
 
         // Also remove any non-div elements before appMountPoint
@@ -72,13 +72,13 @@
 
         if (nonDivRemovedCount > 0) {
           console.log(
-            `Netflix WiFi Wall Breaker: Also removed ${nonDivRemovedCount} non-div elements`
+            `Netflix WiFi Wall Breaker: Also removed ${nonDivRemovedCount} non-div elements`,
           );
         }
       }
     } else {
       console.log(
-        "Netflix WiFi Wall Breaker: appMountPoint not found yet, retrying..."
+        "Netflix WiFi Wall Breaker: appMountPoint not found yet, retrying...",
       );
       // Retry after a short delay
       setTimeout(removeDivsUntilAppMountPoint, 500);
@@ -160,7 +160,6 @@
 
       #netflix-wifi-wall-breaker-controls.visible {
         opacity: 1;
-        pointer-events: all;
       }
 
       #netflix-wifi-wall-breaker-controls .controls-container {
@@ -211,6 +210,7 @@
         color: white;
         transition: all 0.2s ease;
         backdrop-filter: blur(10px);
+        pointer-events: auto;
       }
 
       #netflix-wifi-wall-breaker-controls .control-btn:hover {
@@ -236,6 +236,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+        pointer-events: auto;
       }
 
              #netflix-wifi-wall-breaker-controls .progress-bar {
@@ -413,7 +414,7 @@
       if (!isVideoPage) {
         isVideoPage = true;
         console.log(
-          "Netflix WiFi Wall Breaker: Video page detected, creating controls..."
+          "Netflix WiFi Wall Breaker: Video page detected, creating controls...",
         );
         createVideoControls();
 
@@ -432,7 +433,7 @@
           videoControls = null;
         }
         console.log(
-          "Netflix WiFi Wall Breaker: Left video page, removing controls..."
+          "Netflix WiFi Wall Breaker: Left video page, removing controls...",
         );
       }
     }
@@ -462,7 +463,7 @@
 
       if (shouldCheck) {
         console.log(
-          "Netflix WiFi Wall Breaker: DOM changes detected, re-running script..."
+          "Netflix WiFi Wall Breaker: DOM changes detected, re-running script...",
         );
         setTimeout(removeDivsUntilAppMountPoint, 100);
         setTimeout(handleVideoPage, 100);
