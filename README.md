@@ -1,4 +1,6 @@
-# Netflix GraphQL Blocker — Chrome Extension
+# Netflix WiFi Wall Breaker — Chrome Extension
+
+Bypass Netflix's WiFi wall and enjoy your favorite shows on any network!
 
 Blocks outbound requests from **netflix.com** to:
 
@@ -6,10 +8,11 @@ Blocks outbound requests from **netflix.com** to:
 https://web.prod.cloud.netflix.com/graphql
 ```
 
-…where the request payload contains:
+…where the request payload contains any of the following operations:
 
 ```json
 { "operationName": "CLCSInterstitialPlaybackAndPostPlayback" }
+{ "operationName": "CLCSInterstitialLolomo" }
 ```
 
 ---
@@ -19,9 +22,10 @@ https://web.prod.cloud.netflix.com/graphql
 The extension injects a content script at `document_start` (before any page JS runs) directly into the **MAIN** world. This lets it wrap the native `window.fetch` and `window.XMLHttpRequest` before Netflix's own code can use them.
 
 For every outbound request it:
+
 1. Checks if the URL starts with the target GraphQL endpoint.
 2. Parses the request body (supports both single and **batched** GraphQL operations).
-3. If the `operationName` matches, it **cancels** the real request and returns a synthetic empty `{ data: null, errors: [] }` response so Netflix doesn't crash.
+3. If the `operationName` matches any blocked operation, it **cancels** the real request and returns a synthetic empty `{ data: null, errors: [] }` response so Netflix doesn't crash.
 
 ---
 
@@ -30,18 +34,34 @@ For every outbound request it:
 1. Open Chrome and go to `chrome://extensions/`
 2. Enable **Developer mode** (top-right toggle)
 3. Click **Load unpacked**
-4. Select the `netflix-blocker` folder
+4. Select the `netflix-wifi-wall-breaker` folder
 5. Navigate to Netflix — the blocker is active immediately
 
 ---
 
 ## Files
 
-| File | Purpose |
-|------|---------|
+| File            | Purpose                          |
+| --------------- | -------------------------------- |
 | `manifest.json` | Extension manifest (Manifest V3) |
-| `content.js` | Request interception logic |
-| `icon.png` | Extension icon |
+| `content.js`    | Request interception logic       |
+| `icon16.png`    | 16×16 extension icon             |
+| `icon48.png`    | 48×48 extension icon             |
+| `icon128.png`   | 128×128 extension icon           |
+
+---
+
+## Adding more blocked operations
+
+Open `content.js` and add entries to the `BLOCKED_OPERATIONS` set at the top:
+
+```js
+const BLOCKED_OPERATIONS = new Set([
+  "CLCSInterstitialPlaybackAndPostPlayback",
+  "CLCSInterstitialLolomo",
+  // add more here
+]);
+```
 
 ---
 
